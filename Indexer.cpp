@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 	 
 	 ss >> url;
 	 
-	 URLheap heap;
+	 URLheap heap; // adding on to same heap, this is a problem, might need new pointer
 	 indexer[url] = heap;
 	 
 	 while (ss >> word) {
@@ -51,6 +51,10 @@ int main(int argc, char *argv[]) {
 		 indexer[url].push_back(*it);
 		 push_heap(indexer[url].begin(), indexer[url].end(), index_sort());
 	 }
+	 
+	 url_line.clear();
+	 ss.clear();
+	 //url.clear();
 	 
  }
  
