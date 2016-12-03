@@ -39,11 +39,13 @@ int main(int argc, char *argv[]) {
 	 
 	 while (ss >> word) {
 		 // count the frequency of each word
+		 cout << word;
 		 if (frequency.find(word) == frequency.end()) {
 			 frequency[word] = 1;
 		 } else {
 			 frequency[word] += 1;
 		 }
+		 cout << frequency[word];
 	 }
 	 
 	 // add those frequency pairs to the url indexer
@@ -54,7 +56,7 @@ int main(int argc, char *argv[]) {
 	 
 	 url_line.clear();
 	 ss.clear();
-	 //url.clear();
+	 frequency.clear();
 	 
  }
  
