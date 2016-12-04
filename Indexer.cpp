@@ -1,3 +1,14 @@
+//John Nolan
+//Indexer.cpp
+//Accepts input with a list of urls and the included text, as:
+//url1 word1 word2...
+//url2 word1 word2...
+//url3 ...
+//...
+//And organizes them into a map of strings and heaps, the heap containing the all the
+//urls in which that word occurs and their frequencies.
+//TODO: make this a class
+
 #include <iostream>
 #include <sstream>
 #include <map>
