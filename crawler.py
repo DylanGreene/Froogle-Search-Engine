@@ -4,9 +4,21 @@
 # multiple threads for faster thread-based parallel processing. Also creates a
 # graph to display the connection of all the links visited
 
+# List of URLs to start with
+
+STARTURLS = [
+            'https://en.wikipedia.org/wiki/Web_crawler',
+            'https://www3.nd.edu/~pbui/teaching/cse.30331.fa16/reading07.html',
+            'http://www.espn.com'
+            ]
+
+DEPTH = 3
+
 # Library Imports
 # ------------------------------------------------------------------------
 
+import re
+import string
 from threading import Thread
 import urllib.request
 import httplib2
@@ -34,21 +46,19 @@ class Graph(object):
         if vertex not in self.__graph:
             self.__graph[vertex] = []
 
-    def add_edge(self, edge):
-        edge = set(edge)
-        vertex1 = edge.pop()
-        if edge:
-            vertex2 = edge.pop()
-        else: # Self loop
-            vertex2 = vertex1
-        if vertex1 in self.__graph:
-            self.__graph[vertex1].append(vertex2)
-        else:
-            self.__graph[vertex1] = [vertex2]
-        if vertex2 in self.__freqs:
-            self.__freqs[vertex2] += 1
-        else:
-            self.__freqs[vertex2] = 1
+    def add_edge(self, src, dst):
+        if src in self.__graph and dst not in self.__graph[src]:
+            self.__graph[src].append(dst)
+            if dst in self.__freqs:
+                self.__freqs[dst] += 1
+            else:
+                self.__freqs[dst] = 1
+        elif src not in self.__graph:
+            self.__graph[src] = [dst]
+            if dst in self.__freqs:
+                self.__freqs[dst] += 1
+            else:
+                self.__freqs[dst] = 1
 
     def __generate_edges(self):
         edges = []
@@ -92,10 +102,11 @@ def crawler(url, graph):
     except:
         return crawled
 
-    soup = BeautifulSoup(response, 'lxml')
+    # Use BeautifulSoup to find all links on a page
+    soup = BeautifulSoup(response.decode('utf-8', 'ignore'), 'lxml')
     for link in soup.find_all('a'):
         if link.has_attr('href') and link['href'].startswith("http"):
-            graph.add_edge((url, link['href']))
+            graph.add_edge(url, link['href'])
             urls.append(link['href'])
     return urls
 
@@ -104,7 +115,7 @@ def crawler(url, graph):
 def recursive_crawler(url, crawled, graph, depth):
     if url not in crawled:
         crawled.add(url)
-    if len(crawled) > 1000 or depth > 1:
+    if len(crawled) > 1000 or depth > DEPTH:
         return crawled
     http = httplib2.Http(timeout=50)
     try:
@@ -112,10 +123,11 @@ def recursive_crawler(url, crawled, graph, depth):
     except:
         return crawled
 
+    # Use BeautifulSoup to find all links on a page
     soup = BeautifulSoup(response, 'lxml')
     for link in soup.find_all('a'):
         if link.has_attr('href') and link['href'].startswith("http"):
-            graph.add_edge((url, link['href']))
+            graph.add_edge(url, link['href'])
             if link['href'] not in crawled:
                 # print(link['href'])
                 crawled.add(link['href'])
@@ -132,71 +144,71 @@ def filterText(text):
 
 # Prints out url with all text from url on one line
 
-def textParser(url):
-    print (url, end='')
-    webPage = requests.get(url)
-    # Format html and only print text from webpage:
-    soup = BeautifulSoup(webPage.content, "lxml")
-    allText = soup.findAll(text=True)
-    for i in allText:
-        if filterText(i):
-            i = i.lower()
-            print (i.replace('\n',' '), end='')
+def textParser(url, f):
+    line = url + " "
+    http = httplib2.Http(timeout=10)
+    try:
+        status, response = http.request(url)
+    except:
+        return
 
+    soup = BeautifulSoup(response.decode('utf-8', 'ignore'), 'lxml')
+    # Format html and only print text from webpage:
+    for word in soup.find_all(text=True):
+        if filterText(word):
+            pattern = re.compile('[\W_]+') #, re.UNICODE)
+            pattern.sub('', word)
+            filter(str.isalpha, word)
+            word = word.lower()
+            word = word.strip()
+            word = " ".join(word.split())
+            if not len(word) == 0:
+                line += word + " "
+    print(line, file=f)
 
 # Main exection
 # -----------------------------------------------------------------------
 
-startURLs = ['https://en.wikipedia.org/wiki/Web_crawler',
-'https://www3.nd.edu/~pbui/teaching/cse.30331.fa16/reading07.html',
-'https://www.youtube.com/', 'http://www.espn.com']
-graph = Graph()
+if __name__ == "__main__":
+    graph = Graph()
 
-'''
-found = set()
-for url in startURLs:
-    found.add(crawler(url,graph))
+    urls = set()
+    crawled = set()
 
-print(found)
-'''
+    for url in STARTURLS:
+        urls.add(url)
 
-urls = set()
-foundurls = set()
-crawled = set()
-for url in startURLs:
-    urls.add(url)
-for i in range(2):
-    threads = []
-    for url in urls:
-        if url not in crawled:
-            thread = ThreadWithReturn(target=crawler, args=(url,graph,))
-            threads.append(thread)
-            '''
-            found = test_crawler(url, graph)
-            crawled.add(url)
-            for newly in found:
-                foundurls.add(newly)
-            for url in foundurls:
+    # Loop a certain depth
+    for i in range(DEPTH):
+        threads = []
+        for url in urls:
+            if url not in crawled:
+                thread = ThreadWithReturn(target=crawler, args=(url,graph,))
+                threads.append(thread)
+                crawled.add(url)
+        # Start and join the threads
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            found = thread.join()
+            for url in found:
                 urls.add(url)
-            '''
-            crawled.add(url)
+
+    # Get the text for each page
+    textFile = open('.urlText.txt', 'w')
+    del threads[:]
+    for url in urls:
+        # print(url)
+        thread = Thread(target=textParser, args=(url,textFile,))
+        threads.append(thread)
     for thread in threads:
-        thread.start()
+        if not thread.is_alive():
+            thread.start()
     for thread in threads:
-        found = thread.join()
-        for url in found:
-            urls.add(url)
-for url in urls:
-    print(url)
-    # textParser(url)
+        thread.join()
 
-'''
-threads = [threading.Thread(target=crawler, args=(url,graph,)) for url in startURLs]
+    textFile.close()
 
-for thread in threads:
-    thread.start()
-for thread in threads:
-    thread.join()
-'''
-
-# print(graph)
+    urlsFile = open('.urlCounts.txt', 'w')
+    print(graph, file=urlsFile)
+    urlsFile.close()
