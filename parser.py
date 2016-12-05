@@ -21,8 +21,10 @@ def textParser(url):
             print (i.replace('\n',' '), end='')
 
 def main():
-    defaultURLS = "http://en.wikipedia.org/wiki/Web_crawler"
-    textParser(defaultURLS)
+    defaultURLS = ["http://en.wikipedia.org/wiki/Web_crawler", "http://www.skyscanner.com", "http://www.espn.com", "http://www.youtube.com", "http://www.airbnb.com"]
+    for url in defaultURLS:
+        textParser(url)
+        print ("")
 
 if __name__ == "__main__":
     main()

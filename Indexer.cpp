@@ -16,73 +16,73 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-
+#include "Indexer.h"
 using namespace std;
 
-struct index_sort {
- bool operator()(pair<string, unsigned int> const & a, pair<string, unsigned int> const & b) {
-	 return a.second > b.second; // sort by frequencies
- }
-};
+Indexer::Indexer(){}
 
-typedef vector< pair<string, unsigned int> > URLheap;
 
-int main(int argc, char *argv[]) {
-	
- string url_line;
- string url;
- string word;
- istringstream ss;
- map<string, URLheap > indexer;
- map<string, unsigned int> frequency;
- 
- while (!cin.eof()) {
-	 
-	 // get url followed by all the words
-	 getline(cin, url_line);
-	 
-	 ss.str(url_line);
-	 
-	 ss >> url;
-	 
-	 URLheap heap; // adding on to same heap, this is a problem, might need new pointer
-	 indexer[url] = heap;
-	 
-	 while (ss >> word) {
-		 // count the frequency of each word
-		 if (frequency.find(word) == frequency.end()) {
-			 frequency[word] = 1;
-		 } else {
-			 frequency[word] += 1;
-		 }
-	 }
-	 
-	 // add those frequency pairs to the url indexer
-	 for (auto it = frequency.begin(); it != frequency.end(); it++) {
-		 indexer[url].push_back(*it);
-		 push_heap(indexer[url].begin(), indexer[url].end(), index_sort());
-	 }
-	 
-	 url_line.clear();
-	 url.clear();
-	 ss.clear();
-	 frequency.clear();
-	 
- }
- 
- //Test prints
- for (auto it = indexer.begin(); it != indexer.end(); it++) {
-	 
-	 cout << it->first << endl;
-	 
-	 for (auto jt = it->second.begin(); jt != it->second.end(); jt++) {
-		 cout << jt->first << ": " << jt->second << "   ";
-	 }
-	 
-	 cout << endl;
- }
- 
- return 0;
+
+void Indexer::initializeIndex(){	
+    string url_line;
+    string url;
+    string word;
+    istringstream ss;
+    map<string, unsigned int> frequency;
+
+    while (!cin.eof()) {
+
+        // get url followed by all the words
+        getline(cin, url_line);
+
+        ss.str(url_line);
+
+        ss >> url;
+
+        
+        while (ss >> word) {
+            // count the frequency of each word
+            if (frequency.find(word) == frequency.end()) {
+                if (indexer.find(word) == indexer.end()) {
+                    URLheap heap; 
+                    indexer[url] = heap;
+                    // make a new heap since the word is not in our indexer
+                }
+                frequency[word] = 1;
+            } else {
+                frequency[word] += 1;
+            }
+        }
+
+        // add those frequency pairs to the wolrd indexer
+        for (auto it = frequency.begin(); it != frequency.end(); it++) {
+            indexer[it->first].push_back(pair<string, unsigned int>(url, it->second));
+            push_heap(indexer[it->first].begin(), indexer[it->first].end(), index_sort());
+        }
+
+        url_line.clear();
+        url.clear();
+        ss.clear();
+        frequency.clear();
+
+    }
+/*
+    //Test prints
+    for (auto it = indexer.begin(); it != indexer.end(); it++) {
+
+        cout << it->first << endl;
+
+        for (auto jt = it->second.begin(); jt != it->second.end(); jt++) {
+            cout << jt->first << ": " << jt->second << "   ";
+        }
+
+        cout << endl;
+    }
+*/
+}
+
+map<string, URLheap > Indexer::getIndexer(){
+    return indexer;
 }
 
 //make_map() { }
