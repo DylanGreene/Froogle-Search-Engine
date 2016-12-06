@@ -209,7 +209,7 @@ for option, value in options:
     elif option == '-f':
         GETFREQS = True
     elif option == '-n': # Option for setting the depth to follow links
-        DEPTH = value
+        DEPTH = int(value)
     else:
         usage(1)
 
