@@ -5,6 +5,8 @@
 #include <cmath>
 #include <queue>
 #include "Indexer.h"
+#include <fstream>
+
 
 using namespace std;
 
@@ -28,23 +30,14 @@ struct compareFunc
 
 int main(void)
 {
+    string searchTerm;
     Indexer ind;
+    ifstream searchTerms;
+    searchTerms.open("searchTerms.txt");
     vector<string> searchList;
-    searchList.push_back("wikipedia");
-    searchList.push_back("violation");
-    searchList.push_back("top");
-    searchList.push_back("bottom");
-    searchList.push_back("espn");
-    searchList.push_back("Cabin");
-    searchList.push_back("trust");
-    searchList.push_back("us");
-    searchList.push_back("Home");
-    searchList.push_back("Upload");
-    searchList.push_back("Recommended");
-    searchList.push_back("minutes");
-    searchList.push_back("Help");
-    searchList.push_back("Airbnb");
-    searchList.push_back("About");
+    while(searchTerms >> searchTerm){
+        searchList.push_back(searchTerm);
+    }
     ind.initializeIndex();
     map<string, int> urlRanking;
     map<string, URLheap > index = ind.getIndexer();
@@ -102,10 +95,10 @@ int main(void)
     } 
 
 
-    for(auto it = urlRanking.begin(); it != urlRanking.end(); it++)
-    {
-        cout << "URL Weights: " << it->first << "-" << it->second << endl;
-    }
+   // for(auto it = urlRanking.begin(); it != urlRanking.end(); it++)
+   // {
+  //      cout << "URL Weights: " << it->first << "-" << it->second << endl;
+   // }
     string url;
     while(cin >> url)
     {
@@ -126,7 +119,7 @@ int main(void)
     {
         auto it = finalRank.top();
         finalRank.pop();
-        cout << it.first << " " << it.second << endl;
+        cout << it.first << endl;
     }
 }
 
