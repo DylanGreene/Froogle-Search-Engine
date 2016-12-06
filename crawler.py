@@ -4,28 +4,35 @@
 # multiple threads for faster thread-based parallel processing. Also creates a
 # graph to display the connection of all the links visited
 
-# List of URLs to start with
-
-STARTURLS = [
-            'https://en.wikipedia.org/wiki/Web_crawler',
-            'https://www3.nd.edu/~pbui/teaching/cse.30331.fa16/reading07.html',
-            'http://www.espn.com'
-            ]
-
-DEPTH = 3
-
 # Library Imports
 # ------------------------------------------------------------------------
 
 import re
 import string
-from threading import Thread
-import urllib.request
+import os
+import sys
+import getopt
 import httplib2
 import requests
-import sys
+import urllib.request
 from collections import defaultdict
+from threading import Thread
 from bs4 import BeautifulSoup, SoupStrainer
+
+# Global Variables
+# -------------------------------------------------------------------------
+
+PROGRAM_NAME = os.path.basename(sys.argv[0])
+
+STARTURLS = [
+            'https://en.wikipedia.org/wiki/Web_crawler',
+            'https://www.reddit.com/',
+            'http://www.espn.com'
+            ]
+
+DEPTH = 2
+GETTEXT = False
+GETFREQS = False
 
 # Classes and Fuctions
 # ------------------------------------------------------------------------
@@ -91,6 +98,26 @@ class ThreadWithReturn(Thread):
     def join(self):
         Thread.join(self)
         return self._return
+
+# Error function to display error messages
+
+def error(message, exit_code = 1):
+    print >>sys.stderr, message
+    sys.exit(exit_code)
+
+# Usage function for help messages
+
+def usage(exit_code = 0):
+    error('''Usage: {} [ [-t -f] -n DEPTH ]
+
+    Options:
+
+        -n DEPTH    Set the depth to follow links
+        -t          Write the text of each URL to a .urlText.txt
+        -f          Write the number of URLs linking to a URL to .urlFreqs.txt
+        -h          Show this help message'''
+        .format(PROGRAM_NAME, exit_code))
+
 
 # Crawler function which gathers all links from a certain url
 
@@ -166,6 +193,29 @@ def textParser(url, f):
                 line += word + " "
     print(line, file=f)
 
+# Parse command
+# -----------------------------------------------------------------------
+
+try:
+    options, arguments = getopt.getopt(sys.argv[1:], "htfn:")
+except getopt.GetoptError as e:
+    error(e)
+
+for option, value in options:
+    if option == '-h':
+        usage(0)
+    elif option == '-h':
+        GETTEXT = True
+    elif option == '-f':
+        GETFREQS = True
+    elif option == '-n': # Option for setting the depth to follow links
+        DEPTH = value
+    else:
+        usage(1)
+
+if not len(arguments) == 0:
+    usage(1)
+
 # Main exection
 # -----------------------------------------------------------------------
 
@@ -194,21 +244,24 @@ if __name__ == "__main__":
             for url in found:
                 urls.add(url)
 
+    # Get the number of links to each URL
+    if GETFREQS:
+        urlsFile = open('.urlCounts.txt', 'w')
+        print(graph, file=urlsFile)
+        urlsFile.close()
+
     # Get the text for each page
-    textFile = open('.urlText.txt', 'w')
-    del threads[:]
-    for url in urls:
-        # print(url)
-        thread = Thread(target=textParser, args=(url,textFile,))
-        threads.append(thread)
-    for thread in threads:
-        if not thread.is_alive():
-            thread.start()
-    for thread in threads:
-        thread.join()
+    if GETTEXT:
+        textFile = open('.urlText.txt', 'w')
+        del threads[:]
+        for url in urls:
+            # print(url)
+            thread = Thread(target=textParser, args=(url,textFile,))
+            threads.append(thread)
+        for thread in threads:
+            if not thread.is_alive():
+                thread.start()
+        for thread in threads:
+            thread.join()
 
-    textFile.close()
-
-    urlsFile = open('.urlCounts.txt', 'w')
-    print(graph, file=urlsFile)
-    urlsFile.close()
+        textFile.close()
