@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lan="en">
+  <head>
+    <title>Froogle</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+  <div class="top">
+    <form class="search" method="POST">
+        <input class="search" type="text" name="text">
+        <input class="submit" type="submit" name="index" value="Froogle Search">
+        <input class="submit" type="submit" value="I'm feeling cheap!">
+    </form>
+  </div>
+    <img class=logo src="images/froogle.jpg">
+        {% if results %}
+        <p> {{ numResults }} Results: </p>
+            <ul class="urls">
+            {% for result in results %}
+            <li class="url"><a href="{{ result }}">{{ result }}</a></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+  </body>
+</html>
