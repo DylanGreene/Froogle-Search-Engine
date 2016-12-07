@@ -45,7 +45,7 @@ void Indexer::initializeIndex(){
             if (frequency.find(word) == frequency.end()) {
                 if (indexer.find(word) == indexer.end()) {
                     URLheap heap; 
-                    indexer[url] = heap;
+                    indexer[word] = heap;
                     // make a new heap since the word is not in our indexer
                 }
                 frequency[word] = 1;
