@@ -26,8 +26,10 @@ PROGRAM_NAME = os.path.basename(sys.argv[0])
 
 STARTURLS = [
             'https://en.wikipedia.org/wiki/Web_crawler',
-            'https://www.reddit.com/',
+            'https://www.nd.edu/',
             'http://www.espn.com'
+            'https://www3.nd.edu/~pbui/teaching/cse.30331.fa16/reading03.html'
+            'http://stackoverflow.com/questions/927358/how-to-undo-last-commits-in-git'
             ]
 
 DEPTH = 2
@@ -102,7 +104,7 @@ class ThreadWithReturn(Thread):
 # Error function to display error messages
 
 def error(message, exit_code = 1):
-    print >>sys.stderr, message
+    print(message, file=sys.stderr)
     sys.exit(exit_code)
 
 # Usage function for help messages
@@ -204,7 +206,7 @@ except getopt.GetoptError as e:
 for option, value in options:
     if option == '-h':
         usage(0)
-    elif option == '-h':
+    elif option == '-t':
         GETTEXT = True
     elif option == '-f':
         GETFREQS = True
