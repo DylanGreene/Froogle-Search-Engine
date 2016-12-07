@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <sstream>
-#include <map>
+#include <unordered_map>
 //#include <queue>
 #include <vector>
 #include <algorithm>
@@ -28,7 +28,7 @@ void Indexer::initializeIndex(){
     string url;
     string word;
     istringstream ss;
-    map<string, unsigned int> frequency;
+    unordered_map<string, unsigned int> frequency;
 
     while (!cin.eof()) {
 
