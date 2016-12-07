@@ -64,11 +64,4 @@ int main(void){
         finalRank.pop();
         cout << it.first << endl;
     }
-    /*
-    while(!finalRank.empty()){
-        auto it = finalRank.top();
-        finalRank.pop();
-        cout << it.first << endl;
-    }
-    */
 }

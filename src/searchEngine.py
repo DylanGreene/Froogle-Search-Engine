@@ -18,15 +18,16 @@ def index():
 
 @app.route('/', methods=['POST'])
 def my_form_post():
-    text = request.form['text']
+    search = request.form['search'].lower()
+    if len(search) == 0:
+        return render_template("index.html", results=None, numResults=0)
     searchFile = open(".searchTerms.txt", "w")
-    searchFile.write(text)
+    searchFile.write(search)
     searchFile.close()
     urlText = open(".urlText.txt", "r")
 
     p = subprocess.Popen("./resultsServer", stdin=urlText, stdout=subprocess.PIPE, shell=True)
     (results,err) = p.communicate()
-    print(results)
     results = results.split('\n')
     return render_template("index.html", results=results, numResults = len(results))
 
