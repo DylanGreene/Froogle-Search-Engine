@@ -11,10 +11,10 @@
 //...
 //And organizes them into a map of strings and heaps, the heap containing the all the
 //urls in which that word occurs and their frequencies.
-//TODO: make this a class
+
 #include <iostream>
 #include <sstream>
-#include <map>
+#include <unordered_map>
 //#include <queue>
 #include <vector>
 #include <algorithm>
@@ -29,10 +29,10 @@ class Indexer{
     public:
         Indexer();
         void initializeIndex();
-        map<string, URLheap> getIndexer();
+        unordered_map<string, URLheap> getIndexer();
 
     private:
-        map<string, URLheap> indexer; 
+        unordered_map<string, URLheap> indexer; 
         struct index_sort {
             bool operator()(pair<string, unsigned int> const & a, pair<string, unsigned int> const & b) {
                 return a.second > b.second; // sort by frequencies

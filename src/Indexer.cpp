@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <sstream>
-#include <map>
+#include <unordered_map>
 //#include <queue>
 #include <vector>
 #include <algorithm>
@@ -28,7 +28,7 @@ void Indexer::initializeIndex(){
     string url;
     string word;
     istringstream ss;
-    map<string, unsigned int> frequency;
+    unordered_map<string, unsigned int> frequency;
 
     while (!cin.eof()) {
 
@@ -45,7 +45,7 @@ void Indexer::initializeIndex(){
             if (frequency.find(word) == frequency.end()) {
                 if (indexer.find(word) == indexer.end()) {
                     URLheap heap; 
-                    indexer[url] = heap;
+                    indexer[word] = heap;
                     // make a new heap since the word is not in our indexer
                 }
                 frequency[word] = 1;
