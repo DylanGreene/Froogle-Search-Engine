@@ -1,3 +1,26 @@
+* {
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+.wrapper {
+    min-height: 100%;
+    margin: 0 auto -3em;
+}
+
+.header {
+    padding-top: 50px;
+}
+
+.hero {
+    max-width: 50%;
+    height: auto;
+    width: auto\10;
+}
+
 .search {
     width: 55%;
     margin: auto;
@@ -53,12 +76,16 @@ input[type=text] {
     padding-bottom: 15px;
 }
 
+.footer, .push {
+    height: 3em;
+}
+
+.footer-text {
+    top: 30%;
+    position: relative;
+}
+
 .footer {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 0.5rem;
-    background-color: #e7e7e7;
+    background: #e7e7e7;
     text-align: center;
 }
