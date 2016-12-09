@@ -35,6 +35,7 @@ STARTURLS = [
 DEPTH = 2
 GETTEXT = False
 GETFREQS = False
+USETHREADS = True
 
 # Classes and Fuctions
 # ------------------------------------------------------------------------
@@ -118,6 +119,7 @@ def usage(exit_code = 0):
         -u STARTURLSFILE    Provide a file containing one URL per line for the starting URLs
         -t                  Write the text of each URL to a .urlText.txt
         -f                  Write the number of URLs linking to a URL to .urlFreqs.txt
+        -p                  Turn off thread-based parallelism
         -h                  Show this help message'''
         .format(PROGRAM_NAME, exit_code))
 
@@ -175,7 +177,7 @@ def textParser(url, f):
 # -----------------------------------------------------------------------
 
 try:
-    options, arguments = getopt.getopt(sys.argv[1:], "htfn:u:")
+    options, arguments = getopt.getopt(sys.argv[1:], "htfpn:u:")
 except getopt.GetoptError as e:
     error(e)
 
@@ -196,6 +198,8 @@ for option, value in options:
                     STARTURLS.append(line)
         except IOError as e:
             error(e)
+    elif option == '-p':
+        USETHREADS = False
     else:
         usage(1)
 
@@ -205,6 +209,7 @@ if not len(arguments) == 0:
 
 if os.path.isfile("mapfile.txt"):
     os.remove("mapfile.txt")
+
 # Main exection
 # -----------------------------------------------------------------------
 
@@ -219,17 +224,28 @@ if __name__ == "__main__":
 
     # Loop a certain depth
     for i in range(DEPTH):
-        threads = []
-        for url in urls:
-            if url not in crawled:
-                thread = ThreadWithReturn(target=crawler, args=(url,graph,))
-                threads.append(thread)
-                crawled.add(url)
-        # Start and join the threads
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            found = thread.join()
+        if USETHREADS:
+            threads = []
+            for url in urls:
+                if url not in crawled:
+                    thread = ThreadWithReturn(target=crawler, args=(url,graph,))
+                    threads.append(thread)
+                    crawled.add(url)
+            # Start and join the threads
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                found = thread.join()
+                for url in found:
+                    urls.add(url)
+        else:
+            found = []
+            for url in urls:
+                if url not in crawled:
+                    ret = crawler(url,graph)
+                    for new in ret:
+                        found.append(new)
+                    crawled.add(url)
             for url in found:
                 urls.add(url)
 
@@ -242,14 +258,18 @@ if __name__ == "__main__":
     # Get the text for each page
     if GETTEXT:
         textFile = open('.urlText.txt', 'w')
-        del threads[:]
-        for url in urls:
-            thread = Thread(target=textParser, args=(url,textFile,))
-            threads.append(thread)
-        for thread in threads:
-            if not thread.is_alive():
-                thread.start()
-        for thread in threads:
-            thread.join()
+        if USETHREADS:
+            del threads[:]
+            for url in urls:
+                thread = Thread(target=textParser, args=(url,textFile,))
+                threads.append(thread)
+            for thread in threads:
+                if not thread.is_alive():
+                    thread.start()
+            for thread in threads:
+                thread.join()
+        else:
+            for url in urls:
+                textParser(url,textFile)
 
         textFile.close()
