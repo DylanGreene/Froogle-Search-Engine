@@ -18,17 +18,17 @@ src/.searchTerms.txt:
 	@echo "google" > src/.searchTerms.txt
 
 #test: test-output test-memory test-time
-test: test-memory
+test: test-output test-time
 
 test-output: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing output...
-	@[`./src/resultsServer`]
+	@cd src; ./resultsServer > /dev/null 2>&1; cd ..
 	@test -s ./src/.mapFile.txt || exit 1;
 
 test-memory: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing memory...
-	@[ `valgrind --leak-check=full ./src/resultsServer 2>&1 | grep ERROR | awk '{print $$4}'` = 0 ]
+	@cd src; [ `valgrind --leak-check=full ./resultsServer 2>&1 | grep ERROR | awk '{print $$4}'` = 0 ]
 
 test-time: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing time...
-	@./measure src/resultsServer | tail -n 1 | awk '{ if ($$1 > 1.0) { print "Time limit exceeded"; exit 1} }'
+	@cd src; ./measure ./resultsServer > /dev/null | tail -n 1 | awk '{ if ($$0 > 30.0) { print "Time limit exceeded"; exit 1} }'
