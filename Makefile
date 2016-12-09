@@ -1,5 +1,5 @@
 CXX=		g++
-CXXFLAGS=	-g -gdwarf-2 -Wall -std=gnu++11
+CXXFLAGS=	-g -gdwarf-2 -Wall -std=c++11
 SHELL=		bash
 PROGRAMS=	src/resultsServer
 
