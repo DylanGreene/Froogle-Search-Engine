@@ -202,6 +202,9 @@ for option, value in options:
 if not len(arguments) == 0:
     usage(1)
 
+
+if os.path.isfile("mapfile.txt"):
+    os.remove("mapfile.txt")
 # Main exection
 # -----------------------------------------------------------------------
 
