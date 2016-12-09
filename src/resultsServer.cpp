@@ -105,6 +105,7 @@ int main(void){
     }
 	//Prints the top 10 ranks
     for(int i = 0; i < 10; i++){
+        if(finalRank.size() == 0) break;
         auto it = finalRank.top();
         finalRank.pop();
         cout << it.first << endl;
