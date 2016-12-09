@@ -6,6 +6,7 @@ compiler:
 before_install:
     - sudo apt-get update
     - sudo apt-get install python3
+    - sudo apt-get install python3-pip
 
 install:
     - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
