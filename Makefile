@@ -17,6 +17,9 @@ src/.urlText.txt:
 src/.searchTerms.txt:
 	@echo "google" > src/.searchTerms.txt
 
+src/measure:
+	$(CXX) $(CXXFLAGS) $^ -o measure
+
 #test: test-output test-memory test-time
 test: test-output test-time
 
@@ -29,6 +32,6 @@ test-memory: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing memory...
 	@cd src; [ `valgrind --leak-check=full ./resultsServer 2>&1 | grep ERROR | awk '{print $$4}'` = 0 ]
 
-test-time: src/resultsServer src/.searchTerms.txt src/.urlText.txt
+test-time: src/resultsServer src/.searchTerms.txt src/.urlText.txt src/measure
 	@echo Testing time...
 	@cd src; ./measure ./resultsServer > /dev/null | tail -n 1 | awk '{ if ($$0 > 30.0) { print "Time limit exceeded"; exit 1} }'
