@@ -13,7 +13,7 @@ using namespace std;
 
 int calcSearchTermWeight(unsigned int val){
     int toReturn = 0;
-    for(int i = 1; i <= val; i++){
+    for(unsigned i = 1; i <= val; i++){
         toReturn += 100/pow(2, (i-1));
     }
     return toReturn;
@@ -57,15 +57,15 @@ int main(void){
 		int urlCount;
 		while(ss >> url)
 		{
-			ss >> urlCount;	
+			ss >> urlCount;
 			urlHeap.push_back(pair<string, int>(url, urlCount));
 		}
 		index[word] = urlHeap;
 	}
 
-    for(int i = 0; i < searchList.size(); i++){
+    for(int i = 0; (size_t)i < searchList.size(); i++){
         auto vec = index[searchList[i]];
-        for(int j = 0; j < vec.size(); j++){
+        for(int j = 0; (size_t)j < vec.size(); j++){
             int weight = calcSearchTermWeight(vec[j].second);
             urlRanking[vec[j].first] += weight;
         }
