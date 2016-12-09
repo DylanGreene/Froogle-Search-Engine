@@ -3,24 +3,24 @@
 if [ ! -f src/.urlText.txt ] && [ ! -f src/.urlCounts.txt ]; then
     echo "Crawling..."
     cd src
-    crawler.py -t -f
-    cd -
+    ./crawler.py -t -f
+    cd ..
 elif [ ! -f src/.urlText.txt ]; then
     echo "Crawling..."
     cd src
-    crawler.py -t
-    cd -
+    ./crawler.py -t
+    cd ..
 elif [ ! -f src/.urlCounts.txt ]; then
     echo "Crawling..."
     cd src
-    crawler.py -f
-    cd -
+    ./crawler.py -f
+    cd ..
 fi
 
 echo "Cleaning..."
-make clean
+make -s clean
 echo "Making..."
-make
+make -s
 
 if [ ! -f src/.mapFile.txt ]; then
     echo "Generating search map..."
@@ -28,6 +28,6 @@ if [ ! -f src/.mapFile.txt ]; then
         echo "google" > src/.searchTerms.txt
     fi
     cd src
-    resultsServer 2>&1 /dev/null
-    cd -
+    ./resultsServer > /dev/null 2>&1
+    cd ..
 fi
