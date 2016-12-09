@@ -74,7 +74,7 @@ unordered_map<string, URLheap > Indexer::getIndexer(){
 
 void Indexer::toFile() {
 	ofstream mapFileStream;
-	mapFileStream.open("mapFile.txt");
+	mapFileStream.open(".mapFile.txt");
 	for(auto it = indexer.begin(); it != indexer.end(); it++)
 	{
 		mapFileStream << it->first << " ";
