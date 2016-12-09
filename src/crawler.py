@@ -128,7 +128,7 @@ def usage(exit_code = 0):
 
 def crawler(url, graph):
     urls = []
-    http = httplib2.Http(timeout=50)
+    http = httplib2.Http(timeout=10)
     try:
         status, response = http.request(url)
     except:
