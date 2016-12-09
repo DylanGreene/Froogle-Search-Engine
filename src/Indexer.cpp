@@ -76,7 +76,7 @@ void Indexer::toFile() {
 		mapFileStream << it->first << " ";
 		for(auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
 		{
-			mapFileStream << it2->first << " " << it->second " ";
+			mapFileStream << it2->first << " " << it2->second << " ";
 		}
 		mapFileStream << endl;
 	}
