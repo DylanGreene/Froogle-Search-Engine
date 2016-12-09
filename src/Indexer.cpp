@@ -27,23 +27,27 @@ void Indexer::initializeIndex(){
     string url;
     string word;
     istringstream ss;
+    ifstream fs;
+    fin.open(".urlText.txt")
     unordered_map<string, unsigned int> frequency;
 
-    while (!cin.eof()) {
+    while (!fin.eof()) {
 
         // get url followed by all the words
-        getline(cin, url_line);
+        getline(fin, url_line);
         ss.str(url_line);
         ss >> url;
 
         while (ss >> word) {
             // count the frequency of each word
             if (frequency.find(word) == frequency.end()) {
+		/*
                 if (indexer.find(word) == indexer.end()) {
                     URLheap heap;
                     indexer[word] = heap;
                     // make a new heap since the word is not in our indexer
                 }
+		*/
                 frequency[word] = 1;
             } else {
                 frequency[word] += 1;
