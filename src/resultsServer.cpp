@@ -6,6 +6,7 @@
 #include <queue>
 #include "Indexer.h"
 #include <fstream>
+#include <sstream>
 
 
 using namespace std;
@@ -26,17 +27,41 @@ struct compareFunc{
 
 int main(void){
     string searchTerm;
-    Indexer ind;
+	ifstream checkIfGood("mapFile.txt");
+	if(!checkIfGood.good())
+	{
+    	Indexer ind;
+    	ind.initializeIndex();
+		ind.toFile();
+	}
     ifstream searchTerms;
     searchTerms.open(".searchTerms.txt");
     vector<string> searchList;
     while(searchTerms >> searchTerm){
         searchList.push_back(searchTerm);
     }
-    ind.initializeIndex();
     unordered_map<string, int> urlRanking;
-    unordered_map<string, URLheap > index = ind.getIndexer();
-
+    //map<string, URLheap > index = ind.getIndexer();
+	unordered_map<string, URLheap> index;
+	ifstream mapInFile;
+	string line;
+	string word;
+	mapInFile.open("mapFile.txt");
+	while(getline(mapInFile, line))
+	{
+		stringstream ss;
+		ss.str(line);
+		ss >> word;
+		URLheap urlHeap;
+		string url;
+		int urlCount;
+		while(ss >> url)
+		{
+			ss >> urlCount;	
+			urlHeap.push_back(pair<string, int>(url, urlCount));
+		}
+		index[word] = urlHeap;
+	}
 
     for(int i = 0; i < searchList.size(); i++){
         auto vec = index[searchList[i]];

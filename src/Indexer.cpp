@@ -10,6 +10,7 @@
 */
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -66,3 +67,23 @@ void Indexer::initializeIndex(){
 unordered_map<string, URLheap > Indexer::getIndexer(){
     return indexer;
 }
+
+void Indexer::toFile() {
+	ofstream mapFileStream;
+	mapFileStream.open("mapFile.txt");
+	for(auto it = indexer.begin(); it != indexer.end(); it++)
+	{
+		mapFileStream << it->first << " ";
+		for(auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
+		{
+			mapFileStream << it2->first << " " << it2->second << " ";
+		}
+		mapFileStream << endl;
+	}
+	mapFileStream.close();
+}
+
+//make_map() { }
+//
+//reduce_map() { }
+//
