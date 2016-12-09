@@ -34,14 +34,28 @@ int main(void){
     	ind.initializeIndex();
 		ind.toFile();
 	}
+	checkIfGood.close();
     ifstream searchTerms;
     searchTerms.open(".searchTerms.txt");
     vector<string> searchList;
     while(searchTerms >> searchTerm){
         searchList.push_back(searchTerm);
     }
+	searchTerms.close();
     unordered_map<string, int> urlRanking;
-    //map<string, URLheap > index = ind.getIndexer();
+	unordered_map<string, int> urlFrequencies;
+	ifstream checkUrlCounts(".urlCounts.txt");
+	if(checkUrlCounts.good())
+	{
+		string url;
+		int urlNums;
+		while(checkUrlCounts >> url)
+		{
+			checkUrlCounts >> urlNums;
+			urlFrequencies[url] = urlNums;
+		}
+	}
+	checkUrlCounts.close();
 	unordered_map<string, URLheap> index;
 	ifstream mapInFile;
 	string line;
@@ -67,19 +81,10 @@ int main(void){
         auto vec = index[searchList[i]];
         for(int j = 0; (size_t)j < vec.size(); j++){
             int weight = calcSearchTermWeight(vec[j].second);
-            urlRanking[vec[j].first] += weight;
+            urlRanking[vec[j].first] += (weight + 5*urlFrequencies[vec[j].first]);
         }
     }
 
-    string url;
-    while(cin >> url){
-        int numEdges;
-        cin >> numEdges;
-        auto it = urlRanking.find(url);
-        if(it != urlRanking.end()){
-            it->second += 5* numEdges;
-        }
-    }
     priority_queue< pair<string, int>, vector< pair<string, int> >, compareFunc> finalRank;
     for(auto it = urlRanking.begin(); it != urlRanking.end(); it++){
         finalRank.push(*it);
