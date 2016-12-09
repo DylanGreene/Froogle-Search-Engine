@@ -6,6 +6,7 @@
 #include <queue>
 #include "Indexer.h"
 #include <fstream>
+#include <stringstream>
 
 
 using namespace std;
@@ -40,7 +41,20 @@ int main(void)
     }
     ind.initializeIndex();
     map<string, int> urlRanking;
-    map<string, URLheap > index = ind.getIndexer();
+    //map<string, URLheap > index = ind.getIndexer();
+	map<string, URLheap> index;
+	ifstream mapInFile;
+	string line;
+	string word;
+	mapInFile.open("mapFile.txt");
+	while(getLine(mapInFile, line))
+	{
+		stringstream ss;
+		ss.str(line);
+		ss >> word;
+		while
+	}
+	URLheap urlHeap;
 
 
     for(int i = 0; i < searchList.size(); i++)

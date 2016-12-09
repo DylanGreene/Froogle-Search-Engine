@@ -29,6 +29,7 @@ class Indexer{
     public:
         Indexer();
         void initializeIndex();
+		void toFile();
         unordered_map<string, URLheap> getIndexer();
 
     private:
