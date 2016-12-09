@@ -32,4 +32,3 @@ test-memory: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 test-time: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing time...
 	@./measure src/resultsServer | tail -n 1 | awk '{ if ($$1 > 1.0) { print "Time limit exceeded"; exit 1} }'
-	@./measure src/crawler.py | tail -n 1 | awk '{ if ($$1 > 600) { print "Time limit exceeded"; exit 1} }'
