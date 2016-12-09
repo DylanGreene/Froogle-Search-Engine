@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-# Web Crawler: Recursively follows and finds all links on a webpage using
-# multiple threads for faster thread-based parallel processing. Also creates a
-# graph to display the connection of all the links visited
+# Web Crawler: Follows and finds all links on a webpage using multiple
+# threads for faster thread-based parallel processing. Also creates a
+# graph to determine the connection of all the links visited
 
 # Library Imports
 # ------------------------------------------------------------------------
@@ -17,7 +17,7 @@ import requests
 import urllib.request
 from collections import defaultdict
 from threading import Thread
-from bs4 import BeautifulSoup, SoupStrainer
+from bs4 import BeautifulSoup
 
 # Global Variables
 # -------------------------------------------------------------------------
@@ -26,8 +26,10 @@ PROGRAM_NAME = os.path.basename(sys.argv[0])
 
 STARTURLS = [
             'https://en.wikipedia.org/wiki/Web_crawler',
-            'https://www.reddit.com/',
+            'https://www.nd.edu/',
             'http://www.espn.com'
+            'https://www3.nd.edu/~pbui/teaching/cse.30331.fa16/reading03.html'
+            'http://stackoverflow.com/questions/927358/how-to-undo-last-commits-in-git'
             ]
 
 DEPTH = 2
@@ -67,7 +69,7 @@ class Graph(object):
             else:
                 self.__freqs[dst] = 1
 
-    def __generate_edges(self):
+    def __get_edges(self):
         edges = []
         for vertex in self.__graph:
             for neighbour in self.__graph[vertex]:
@@ -102,20 +104,21 @@ class ThreadWithReturn(Thread):
 # Error function to display error messages
 
 def error(message, exit_code = 1):
-    print >>sys.stderr, message
+    print(message, file=sys.stderr)
     sys.exit(exit_code)
 
 # Usage function for help messages
 
 def usage(exit_code = 0):
-    error('''Usage: {} [ [-t -f] -n DEPTH ]
+    error('''Usage: {} [ [-t -f] -n DEPTH -u STARTURLSFILE]
 
     Options:
 
-        -n DEPTH    Set the depth to follow links
-        -t          Write the text of each URL to a .urlText.txt
-        -f          Write the number of URLs linking to a URL to .urlFreqs.txt
-        -h          Show this help message'''
+        -n DEPTH            Set the depth to follow links
+        -u STARTURLSFILE    Provide a file containing one URL per line for the starting URLs
+        -t                  Write the text of each URL to a .urlText.txt
+        -f                  Write the number of URLs linking to a URL to .urlFreqs.txt
+        -h                  Show this help message'''
         .format(PROGRAM_NAME, exit_code))
 
 
@@ -136,31 +139,6 @@ def crawler(url, graph):
             graph.add_edge(url, link['href'])
             urls.append(link['href'])
     return urls
-
-# Recursive crawler function
-
-def recursive_crawler(url, crawled, graph, depth):
-    if url not in crawled:
-        crawled.add(url)
-    if len(crawled) > 1000 or depth > DEPTH:
-        return crawled
-    http = httplib2.Http(timeout=50)
-    try:
-        status, response = http.request(url)
-    except:
-        return crawled
-
-    # Use BeautifulSoup to find all links on a page
-    soup = BeautifulSoup(response, 'lxml')
-    for link in soup.find_all('a'):
-        if link.has_attr('href') and link['href'].startswith("http"):
-            graph.add_edge(url, link['href'])
-            if link['href'] not in crawled:
-                # print(link['href'])
-                crawled.add(link['href'])
-                print(crawled)
-                depth += 1
-                recursive_crawler(link['href'], crawled, graph, depth)
 
 # Filters through text from soup and strips text of whitespace
 
@@ -197,19 +175,27 @@ def textParser(url, f):
 # -----------------------------------------------------------------------
 
 try:
-    options, arguments = getopt.getopt(sys.argv[1:], "htfn:")
+    options, arguments = getopt.getopt(sys.argv[1:], "htfn:u:")
 except getopt.GetoptError as e:
     error(e)
 
 for option, value in options:
     if option == '-h':
         usage(0)
-    elif option == '-h':
+    elif option == '-t':
         GETTEXT = True
     elif option == '-f':
         GETFREQS = True
     elif option == '-n': # Option for setting the depth to follow links
         DEPTH = int(value)
+    elif option == '-u': # Allows user to provide start URLs file
+        STARTURLS = []
+        try:
+            with open(value, 'r') as startFile:
+                for line in startFile:
+                    STARTURLS.append(line)
+        except IOError as e:
+            error(e)
     else:
         usage(1)
 
@@ -255,7 +241,6 @@ if __name__ == "__main__":
         textFile = open('.urlText.txt', 'w')
         del threads[:]
         for url in urls:
-            # print(url)
             thread = Thread(target=textParser, args=(url,textFile,))
             threads.append(thread)
         for thread in threads:

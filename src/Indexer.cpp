@@ -1,30 +1,28 @@
-//John Nolan
-//Indexer.cpp
-//Accepts input with a list of urls and the included text, as:
-//url1 word1 word2...
-//url2 word1 word2...
-//url3 ...
-//...
-//And organizes them into a map of strings and heaps, the heap containing the all the
-//urls in which that word occurs and their frequencies.
-//TODO: make this a class
+/*
+ Accepts input with a list of urls and the included text, as:
+ url1 word1 word2...
+ url2 word1 word2...
+ url3 ...
+ ...
+
+ And organizes them into a map of strings and heaps, the heap containing the
+ all the urls in which that word occurs and their frequencies.
+*/
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
-//#include <queue>
 #include <vector>
 #include <algorithm>
 #include <string>
 #include "Indexer.h"
+
 using namespace std;
 
 Indexer::Indexer(){}
 
-
-
-void Indexer::initializeIndex(){	
+void Indexer::initializeIndex(){
     string url_line;
     string url;
     string word;
@@ -35,17 +33,14 @@ void Indexer::initializeIndex(){
 
         // get url followed by all the words
         getline(cin, url_line);
-
         ss.str(url_line);
-
         ss >> url;
 
-        
         while (ss >> word) {
             // count the frequency of each word
             if (frequency.find(word) == frequency.end()) {
                 if (indexer.find(word) == indexer.end()) {
-                    URLheap heap; 
+                    URLheap heap;
                     indexer[word] = heap;
                     // make a new heap since the word is not in our indexer
                 }
@@ -67,22 +62,9 @@ void Indexer::initializeIndex(){
         frequency.clear();
 
     }
-/*
-    //Test prints
-    for (auto it = indexer.begin(); it != indexer.end(); it++) {
-
-        cout << it->first << endl;
-
-        for (auto jt = it->second.begin(); jt != it->second.end(); jt++) {
-            cout << jt->first << ": " << jt->second << "   ";
-        }
-
-        cout << endl;
-    }
-*/
 }
 
-map<string, URLheap > Indexer::getIndexer(){
+unordered_map<string, URLheap > Indexer::getIndexer(){
     return indexer;
 }
 
