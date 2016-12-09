@@ -27,9 +27,8 @@ struct compareFunc{
 
 int main(void){
     string searchTerm;
-	ifstream checkIfGood("mapFile.txt");
-	if(!checkIfGood.good())
-	{
+	ifstream checkIfGood(".mapFile.txt");
+	if(!checkIfGood.good()){
     	Indexer ind;
     	ind.initializeIndex();
 		ind.toFile();
@@ -45,12 +44,10 @@ int main(void){
     unordered_map<string, int> urlRanking;
 	unordered_map<string, int> urlFrequencies;
 	ifstream checkUrlCounts(".urlCounts.txt");
-	if(checkUrlCounts.good())
-	{
+	if(checkUrlCounts.good()){
 		string url;
 		int urlNums;
-		while(checkUrlCounts >> url)
-		{
+		while(checkUrlCounts >> url){
 			checkUrlCounts >> urlNums;
 			urlFrequencies[url] = urlNums;
 		}
@@ -60,17 +57,15 @@ int main(void){
 	ifstream mapInFile;
 	string line;
 	string word;
-	mapInFile.open("mapFile.txt");
-	while(getline(mapInFile, line))
-	{
+	mapInFile.open(".mapFile.txt");
+	while(getline(mapInFile, line)){
 		stringstream ss;
 		ss.str(line);
 		ss >> word;
 		URLheap urlHeap;
 		string url;
 		int urlCount;
-		while(ss >> url)
-		{
+		while(ss >> url){
 			ss >> urlCount;
 			urlHeap.push_back(pair<string, int>(url, urlCount));
 		}

@@ -5,7 +5,7 @@ PROGRAMS=	src/resultsServer
 
 all:		src/resultsServer
 
-src/resultsServer: src/resultsServer.cpp src/Indexer.cpp
+src/resultsServer: src/Indexer.cpp src/resultsServer.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 clean:
@@ -25,4 +25,3 @@ test: test-memory
 test-memory: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing memory...
 	@[ `valgrind --leak-check=full ./src/resultsServer < src/.urlText.txt 2>&1 | grep ERROR | awk '{print $$4}'` = 0 ]
-

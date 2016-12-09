@@ -208,7 +208,7 @@ if not len(arguments) == 0:
 
 
 if os.path.isfile("mapfile.txt"):
-    os.remove("mapfile.txt")
+    os.remove(".mapFile.txt")
 
 # Main exection
 # -----------------------------------------------------------------------
