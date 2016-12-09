@@ -5,10 +5,16 @@
 # then run crawler with and without threading
 for i in `seq 3`; do
     echo "Depth: " $i
-    echo "with threading..."
-    timeout 1h ./crawler.py -n $i -t -f -b
     echo "without threading..."
-    timeout 1h ./crawler.py -n $i -t -f -p -b
+    timeout 1h ./crawler.py -n $i -f -t -p -b
+    if [ $? -ne 0 ]; then
+        echo "  timed out"
+    fi
+    echo "with threading..."
+    timeout 1h ./crawler.py -n $i -f -t -b
+    if [ $? -ne 0 ]; then
+        echo "  timed out"
+    fi
     echo "resultsServer..." $i
     ./measure ./resultsServer 2>&1 | tail -n 1
 done
