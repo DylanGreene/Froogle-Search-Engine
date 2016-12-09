@@ -203,7 +203,8 @@ if not len(arguments) == 0:
     usage(1)
 
 
-os.remove("mapfile.txt");
+if os.path.isfile("mapfile.txt"):
+    os.remove("mapfile.txt")
 # Main exection
 # -----------------------------------------------------------------------
 
