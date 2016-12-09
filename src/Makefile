@@ -15,3 +15,7 @@ test: test-output test-memory test-time
 
 test-output: src/resultsServer
 	
+test-memory: src/resultsServer
+	@echo Testing memory...
+	@[ `valgrind --leak-check=full ./src/resultsServer < data/input1.txt 2>&1 | grep ERROR | awk '{print $$4}'` = 0 ]
+
