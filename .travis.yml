@@ -11,6 +11,8 @@ before_install:
     - sudo apt-get install python3
     - sudo apt-get install python3-pip
     - sudo apt-get install python3-httplib2
+    - sudo apt-get install python3-bs4
+
 
 install:
     - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
