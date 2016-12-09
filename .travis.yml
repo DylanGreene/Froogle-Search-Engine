@@ -1,25 +1,22 @@
+language: cpp
+
+compiler:
+    - gcc
+
 before_install:
     - sudo apt-get update
     - sudo apt-get install python3
-    # g++4.8.1
-    - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
 
 install:
-  # g++4.8.1
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8"; fi
-  - pip install .
-  - pip install httplib2
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    - pip install httplib2
 
 addons:
   apt:
     sources:
     # add PPAs with more up-to-date toolchains
     - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.6
     packages:
     # install toolchains
-    - gcc-5
-    - g++-5
-
-language: cpp
+    - gcc-4.8
+    - g++-4.8
