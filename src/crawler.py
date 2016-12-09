@@ -213,7 +213,7 @@ if not len(arguments) == 0:
     usage(1)
 
 
-if os.path.isfile("mapfile.txt"):
+if os.path.isfile(".mapfile.txt"):
     os.remove(".mapFile.txt")
 
 # Main exection
@@ -285,4 +285,5 @@ if __name__ == "__main__":
 
     if BENCHMARK:
         print("Time:", datetime.now() - starttime, "sec \tMemory:",
-            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000, "MB")
+            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000,
+            "MB \tURLs Crawled:", len(urls))
