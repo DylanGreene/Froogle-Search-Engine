@@ -28,13 +28,13 @@ void Indexer::initializeIndex(){
     string word;
     istringstream ss;
     ifstream fs;
-    fin.open(".urlText.txt")
+    fs.open(".urlText.txt");
     unordered_map<string, unsigned int> frequency;
 
-    while (!fin.eof()) {
+    while (!fs.eof()) {
 
         // get url followed by all the words
-        getline(fin, url_line);
+        getline(fs, url_line);
         ss.str(url_line);
         ss >> url;
 
@@ -86,8 +86,3 @@ void Indexer::toFile() {
 	}
 	mapFileStream.close();
 }
-
-//make_map() { }
-//
-//reduce_map() { }
-//

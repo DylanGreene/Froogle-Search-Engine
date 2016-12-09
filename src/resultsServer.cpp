@@ -38,6 +38,16 @@ int main(void){
 		ind.toFile();
 	}
 	checkIfGood.close();
+    ifstream checkIfGood2(".searchTerms.txt");
+    if(!checkIfGood2.good()){
+        cout << "Enter a search term: ";
+        string searchstring;
+        cin >> searchstring;
+        ofstream terms;
+        terms.open(".searchTerms.txt");
+        terms << searchstring;
+        terms.close();
+    }
     ifstream searchTerms;
     searchTerms.open(".searchTerms.txt");
     vector<string> searchList;
@@ -49,7 +59,6 @@ int main(void){
     unordered_map<string, int> urlRanking;
 	unordered_map<string, int> urlFrequencies;
 	ifstream checkUrlCounts(".urlCounts.txt");
-	if(checkUrlCounts.good()){
 	//Gets the url frequencies
 	if(checkUrlCounts.good()){
 		string url;
@@ -85,7 +94,7 @@ int main(void){
         auto vec = index[searchList[i]];
         for(int j = 0; (size_t)j < vec.size(); j++){
             int weight = calcSearchTermWeight(vec[j].second);
-            urlRanking[vec[j].first] += (weight + 5*urlFrequencies[vec[j].first]);
+            urlRanking[vec[j].first] += (weight + urlFrequencies[vec[j].first]);
         }
     }
 
