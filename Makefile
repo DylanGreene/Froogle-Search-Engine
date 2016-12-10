@@ -17,11 +17,11 @@ src/.urlText.txt:
 src/.searchTerms.txt:
 	@echo "google" > src/.searchTerms.txt
 
-src/measure:
+src/measure: src/measure.cpp
 	$(CXX) $(CXXFLAGS) $^ -o measure
 
 #test: test-output test-memory test-time
-test: test-output test-time
+test: test-output test-time test-memory
 
 test-output: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing output...
