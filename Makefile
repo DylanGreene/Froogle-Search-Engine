@@ -18,7 +18,7 @@ src/.searchTerms.txt:
 	@echo "google" > src/.searchTerms.txt
 
 src/measure: src/measure.cpp
-	$(CXX) $(CXXFLAGS) $^ -o measure
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
 #test: test-output test-memory test-time
 test: test-output test-time test-memory
