@@ -1,19 +1,25 @@
 #!/bin/bash
 
+if [ $# -eq 0 ]; then
+    N=1
+else
+    N=$1
+fi
+
 if [ ! -f src/.urlText.txt ] && [ ! -f src/.urlCounts.txt ]; then
     echo "Crawling..."
     cd src
-    ./crawler.py -t -f
+    ./crawler.py -t -f -n $N
     cd ..
 elif [ ! -f src/.urlText.txt ]; then
     echo "Crawling..."
     cd src
-    ./crawler.py -t
+    ./crawler.py -t -n $N
     cd ..
 elif [ ! -f src/.urlCounts.txt ]; then
     echo "Crawling..."
     cd src
-    ./crawler.py -f
+    ./crawler.py -f -n $N
     cd ..
 fi
 
