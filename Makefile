@@ -30,7 +30,7 @@ test-output: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 
 test-memory: src/resultsServer src/.searchTerms.txt src/.urlText.txt
 	@echo Testing memory...
-	@cd src; [ `valgrind --leak-check=full ./resultsServer 2>&1 | grep ERROR | awk '{print $$4}'` = 0 ]
+	@cd src; [ `valgrind --leak-check=full ./resultsServer 2>&1 | grep ERROR | awk '{print $$4}'` =: 0 ]
 
 test-time: src/resultsServer src/.searchTerms.txt src/.urlText.txt src/measure
 	@echo Testing time...
