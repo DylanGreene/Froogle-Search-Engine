@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    N=1
+else
+    N=$1
+fi
+
+if [ ! -f src/.urlText.txt ] && [ ! -f src/.urlCounts.txt ]; then
+    echo "Crawling..."
+    cd src
+    ./crawler.py -t -f -n $N
+    cd ..
+elif [ ! -f src/.urlText.txt ]; then
+    echo "Crawling..."
+    cd src
+    ./crawler.py -t -n $N
+    cd ..
+elif [ ! -f src/.urlCounts.txt ]; then
+    echo "Crawling..."
+    cd src
+    ./crawler.py -f -n $N
+    cd ..
+fi
+
+echo "Cleaning..."
+make -s clean
+echo "Making..."
+make -s
+
+if [ ! -f src/.mapFile.txt ]; then
+    echo "Generating search map..."
+    if [ ! -f src/.searchTerms.txt ]; then
+        echo "google" > src/.searchTerms.txt
+    fi
+    cd src
+    ./resultsServer > /dev/null 2>&1
+    cd ..
+fi

@@ -18,6 +18,8 @@ import urllib.request
 from collections import defaultdict
 from threading import Thread
 from bs4 import BeautifulSoup
+import resource
+from datetime import datetime
 
 # Global Variables
 # -------------------------------------------------------------------------
@@ -36,6 +38,7 @@ DEPTH = 2
 GETTEXT = False
 GETFREQS = False
 USETHREADS = True
+BENCHMARK = False
 
 # Classes and Fuctions
 # ------------------------------------------------------------------------
@@ -120,6 +123,7 @@ def usage(exit_code = 0):
         -t                  Write the text of each URL to a .urlText.txt
         -f                  Write the number of URLs linking to a URL to .urlFreqs.txt
         -p                  Turn off thread-based parallelism
+        -b                  Benchmark the execution in time and memory usage
         -h                  Show this help message'''
         .format(PROGRAM_NAME, exit_code))
 
@@ -128,7 +132,7 @@ def usage(exit_code = 0):
 
 def crawler(url, graph):
     urls = []
-    http = httplib2.Http(timeout=50)
+    http = httplib2.Http(timeout=10)
     try:
         status, response = http.request(url)
     except:
@@ -177,7 +181,7 @@ def textParser(url, f):
 # -----------------------------------------------------------------------
 
 try:
-    options, arguments = getopt.getopt(sys.argv[1:], "htfpn:u:")
+    options, arguments = getopt.getopt(sys.argv[1:], "htfpbn:u:")
 except getopt.GetoptError as e:
     error(e)
 
@@ -200,6 +204,8 @@ for option, value in options:
             error(e)
     elif option == '-p':
         USETHREADS = False
+    elif option == '-b':
+        BENCHMARK = True
     else:
         usage(1)
 
@@ -207,13 +213,16 @@ if not len(arguments) == 0:
     usage(1)
 
 
-if os.path.isfile("mapfile.txt"):
+if os.path.isfile(".mapfile.txt"):
     os.remove(".mapFile.txt")
 
 # Main exection
 # -----------------------------------------------------------------------
 
 if __name__ == "__main__":
+    if BENCHMARK:
+        starttime = datetime.now()
+
     graph = Graph()
 
     urls = set()
@@ -273,3 +282,8 @@ if __name__ == "__main__":
                 textParser(url,textFile)
 
         textFile.close()
+
+    if BENCHMARK:
+        print("Time:", datetime.now() - starttime, "sec \tMemory:",
+            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000,
+            "MB \tURLs Crawled:", len(urls))

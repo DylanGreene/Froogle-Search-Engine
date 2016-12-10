@@ -1,1 +1,28 @@
+dist: trusty
+sudo: required
+
 language: cpp
+
+compiler:
+    - gcc
+
+before_install:
+    - sudo apt-get update
+    - sudo apt-get install python3
+    - sudo apt-get install python3-pip
+    - sudo apt-get install python3-httplib2
+    - sudo apt-get install python3-bs4
+
+
+install:
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
+addons:
+  apt:
+    sources:
+    # add PPAs with more up-to-date toolchains
+    - ubuntu-toolchain-r-test
+    packages:
+    # install toolchains
+    - gcc-4.8
+    - g++-4.8
